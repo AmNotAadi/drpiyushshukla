@@ -175,6 +175,27 @@ img{max-width:100%; display:block}
   .cards.three{grid-template-columns:1fr}
 }
 
+/* Mobile-first refinements */
+@media (max-width: 600px){
+  .site-header{padding:10px 14px}
+  .site-nav{gap:10px; overflow-x:auto; white-space:nowrap}
+  .site-nav a,.menu-btn{padding:8px 10px}
+
+  .hero{padding:28px 14px}
+  .hero__actions{flex-direction:column}
+  .hero__actions .button{width:100%; text-align:center}
+  .hero__photo{aspect-ratio:1/1}
+
+  .social-bar{flex-wrap:wrap; padding:8px 14px 0}
+  .social-bar .social{width:100%}
+
+  .section{padding:28px 14px}
+  .section__header{flex-direction:column; align-items:flex-start}
+
+  .table th,.table td{padding:10px}
+  .to-top{right:12px; bottom:12px}
+}
+
 /* Profile links tile */
 .profiles h3{margin-top:0}
 .profile-links{list-style:none; padding:0; margin:8px 0 0; display:grid; gap:10px}

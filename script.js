@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         panels.forEach(p=>p.id===control? (p.hidden=false) : (p.hidden=true));
         tab.classList.add('active');
         tab.setAttribute('aria-selected','true');
+        const y=tab.getBoundingClientRect().top + window.scrollY - (header?header.offsetHeight:0) - 8;
+        if(window.matchMedia('(max-width: 600px)').matches){ window.scrollTo({top:y, behavior:'smooth'}); }
       });
     });
   }
