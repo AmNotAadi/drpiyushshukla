@@ -211,6 +211,8 @@
         </section>
       </div>
     </section>
+
+    <div class="section-sep"></div>
   </main>
 
   <footer class="site-footer">
@@ -220,6 +222,118 @@
   <button class="to-top" aria-label="Back to top">↑</button>
 
   <script src="script.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJ3v4LfZuOJbt9-1hR2A0rET4hVu3yJOs",
+        authDomain: "drpiyush-b6f33.firebaseapp.com",
+        projectId: "drpiyush-b6f33",
+        storageBucket: "drpiyush-b6f33.firebasestorage.app",
+        messagingSenderId: "316729773343",
+        appId: "1:316729773343:web:404f502ca8a0b62d5c342a",
+        measurementId: "G-WE027KLS4F"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Function to load and display research data
+    async function loadResearch() {
+        try {
+            console.log('Loading research data...');
+            
+            let researchSnapshot;
+            try {
+                const researchQuery = query(collection(db, 'research'), orderBy('createdAt', 'desc'));
+                researchSnapshot = await getDocs(researchQuery);
+            } catch (orderError) {
+                console.log('Ordering failed, trying without order:', orderError);
+                researchSnapshot = await getDocs(collection(db, 'research'));
+            }
+            
+            console.log('Research documents found:', researchSnapshot.size);
+            
+            // Clear existing Firebase entries from all tabs
+            const allTabs = ['panel-book', 'panel-other', 'panel-sci', 'panel-scopus', 'panel-patents', 'panel-books-edited', 'panel-books-authored', 'panel-grants'];
+            allTabs.forEach(tabId => {
+                const tabPanel = document.getElementById(tabId);
+                if (tabPanel) {
+                    const existingFirebaseEntries = tabPanel.querySelectorAll('[data-firebase="true"]');
+                    existingFirebaseEntries.forEach(entry => entry.remove());
+                }
+            });
+            
+            // Add Firebase entries to appropriate tabs
+            researchSnapshot.forEach((doc) => {
+                const data = doc.data();
+                console.log('Research data:', data);
+                
+                // Map category values to actual tab IDs
+                const categoryMap = {
+                    'book-chapters': 'panel-book',
+                    'other-indexed': 'panel-other',
+                    'sci-scie': 'panel-sci',
+                    'scopus': 'panel-scopus',
+                    'indian-patents': 'panel-patents',
+                    'books-edited': 'panel-books-edited',
+                    'books-authored': 'panel-books-authored',
+                    'grants-projects': 'panel-grants'
+                };
+                
+                const tabId = categoryMap[data.category];
+                const tabPanel = document.getElementById(tabId);
+                
+                if (tabPanel) {
+                    const pubList = tabPanel.querySelector('.pub-list');
+                    if (pubList) {
+                        const researchItem = document.createElement('li');
+                        researchItem.setAttribute('data-firebase', 'true');
+                        researchItem.innerHTML = data.description;
+                        pubList.insertBefore(researchItem, pubList.firstChild);
+                        console.log(`Added research to tab: ${tabId}`);
+                    } else {
+                        console.log(`No pub-list found in tab: ${tabId}`);
+                    }
+                } else {
+                    console.log(`Tab not found: ${tabId} for category: ${data.category}`);
+                }
+            });
+            
+            // Renumber all entries in each tab
+            allTabs.forEach(tabId => {
+                const tabPanel = document.getElementById(tabId);
+                if (tabPanel) {
+                    const pubList = tabPanel.querySelector('.pub-list');
+                    if (pubList) {
+                        const allItems = pubList.querySelectorAll('li');
+                        allItems.forEach((item, index) => {
+                            // Remove any existing numbering and add new numbering
+                            item.style.counterReset = `list-item ${index + 1}`;
+                        });
+                    }
+                }
+            });
+            
+            console.log('Research data loaded successfully');
+        } catch (error) {
+            console.error('Error loading research:', error);
+        }
+    }
+
+    // Make function available globally
+    window.loadResearch = loadResearch;
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Firebase data script loaded, starting data load...');
+        loadResearch();
+    });
+  </script>
 </body>
 </html>
 

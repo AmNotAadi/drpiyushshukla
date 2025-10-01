@@ -65,7 +65,7 @@
 
     <section class="section reveal" aria-label="Detailed Records">
       <h2>Detailed Records</h2>
-      <ul class="ap-list">
+      <ul class="ap-list" id="academicProfileContainer">
         <li class="ap-row card">
           <span class="ap-sn">1</span>
           <span class="ap-date badge-glow">18/01/2018</span>
@@ -197,6 +197,95 @@
   <button class="to-top" aria-label="Back to top">↑</button>
 
   <script src="script.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJ3v4LfZuOJbt9-1hR2A0rET4hVu3yJOs",
+        authDomain: "drpiyush-b6f33.firebaseapp.com",
+        projectId: "drpiyush-b6f33",
+        storageBucket: "drpiyush-b6f33.firebasestorage.app",
+        messagingSenderId: "316729773343",
+        appId: "1:316729773343:web:404f502ca8a0b62d5c342a",
+        measurementId: "G-WE027KLS4F"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Function to load and display academic profile data
+    async function loadAcademicProfile() {
+        try {
+            console.log('Loading academic profile data...');
+            
+            // Try with ordering first, fallback to no ordering if it fails
+            let academicProfileSnapshot;
+            try {
+                const academicProfileQuery = query(collection(db, 'academicProfile'), orderBy('createdAt', 'desc'));
+                academicProfileSnapshot = await getDocs(academicProfileQuery);
+            } catch (orderError) {
+                console.log('Ordering failed, trying without order:', orderError);
+                academicProfileSnapshot = await getDocs(collection(db, 'academicProfile'));
+            }
+            
+            console.log('Academic profile documents found:', academicProfileSnapshot.size);
+            
+            const academicProfileContainer = document.getElementById('academicProfileContainer');
+            if (academicProfileContainer) {
+                console.log('Academic profile container found on page:', window.location.pathname);
+                
+                // Don't clear existing content, just add Firebase data at the top
+                // Remove any existing Firebase entries first (they have data-firebase="true")
+                const existingFirebaseEntries = academicProfileContainer.querySelectorAll('[data-firebase="true"]');
+                existingFirebaseEntries.forEach(entry => entry.remove());
+                
+                // Add Firebase entries at the top
+                academicProfileSnapshot.forEach((doc, index) => {
+                    const data = doc.data();
+                    console.log('Academic profile data:', data);
+                    const academicProfileItem = document.createElement('li');
+                    academicProfileItem.className = 'ap-row card';
+                    academicProfileItem.setAttribute('data-firebase', 'true'); // Mark as Firebase data
+                    academicProfileItem.innerHTML = `
+                        <span class="ap-sn">${index + 1}</span>
+                        <span class="ap-date badge-glow">${data.date}</span>
+                        <span class="ap-what">${data.position}</span>
+                    `;
+                    // Insert at the beginning of the list
+                    academicProfileContainer.insertBefore(academicProfileItem, academicProfileContainer.firstChild);
+                });
+                
+                // Now renumber all entries sequentially
+                const allEntries = academicProfileContainer.querySelectorAll('.ap-row');
+                allEntries.forEach((entry, index) => {
+                    const snSpan = entry.querySelector('.ap-sn');
+                    if (snSpan) {
+                        snSpan.textContent = index + 1;
+                    }
+                });
+                
+                console.log('Academic profile data loaded successfully');
+            } else {
+                console.log('Academic profile container not found on page:', window.location.pathname);
+            }
+        } catch (error) {
+            console.error('Error loading academic profile:', error);
+        }
+    }
+
+    // Make function available globally
+    window.loadAcademicProfile = loadAcademicProfile;
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Firebase data script loaded, starting data load...');
+        loadAcademicProfile();
+    });
+  </script>
 </body>
 </html>
 

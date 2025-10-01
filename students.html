@@ -52,7 +52,7 @@
               <th>Role</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="studentsContainer">
             <tr><td>1</td><td>Dr. Shraddha Pan</td><td>Study and Analysis of Video Compression with Special Reference to Fractal Video</td><td>Year 2011</td><td>Awarded October 2019</td><td>RGPV, Bhopal</td><td>Supervisor</td></tr>
             <tr><td>2</td><td>Dr. Anoop Chaturvedi</td><td>Non Separable Reversible Data Hiding using Inverse S-Order and Skew Tent Map</td><td>Year 2011</td><td>(Awarded) June 2019</td><td>RGPV, Bhopal</td><td>Supervisor</td></tr>
             <tr><td>3</td><td>Ms. Preeti Tiwari</td><td>Machine Learning Approaches for Special Geographical Data</td><td>Year 2011</td><td>(Submitted 2019)</td><td>RGPV, Bhopal</td><td>Supervisor</td></tr>
@@ -70,6 +70,8 @@
         </table>
       </div>
     </section>
+
+    <div class="section-sep"></div>
   </main>
 
   <footer class="site-footer">
@@ -79,6 +81,101 @@
   <button class="to-top" aria-label="Back to top">↑</button>
 
   <script src="script.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJ3v4LfZuOJbt9-1hR2A0rET4hVu3yJOs",
+        authDomain: "drpiyush-b6f33.firebaseapp.com",
+        projectId: "drpiyush-b6f33",
+        storageBucket: "drpiyush-b6f33.firebasestorage.app",
+        messagingSenderId: "316729773343",
+        appId: "1:316729773343:web:404f502ca8a0b62d5c342a",
+        measurementId: "G-WE027KLS4F"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Function to load and display students data
+    async function loadStudents() {
+        try {
+            console.log('Loading students data...');
+            
+            let studentsSnapshot;
+            try {
+                const studentsQuery = query(collection(db, 'students'), orderBy('createdAt', 'asc'));
+                studentsSnapshot = await getDocs(studentsQuery);
+            } catch (orderError) {
+                console.log('Ordering failed, trying without order:', orderError);
+                studentsSnapshot = await getDocs(collection(db, 'students'));
+            }
+            
+            console.log('Students documents found:', studentsSnapshot.size);
+            
+            const studentsContainer = document.getElementById('studentsContainer');
+            if (studentsContainer) {
+                console.log('Students container found on page:', window.location.pathname);
+                
+                // Remove any existing Firebase entries first
+                const existingFirebaseEntries = studentsContainer.querySelectorAll('[data-firebase="true"]');
+                existingFirebaseEntries.forEach(entry => entry.remove());
+                
+                // Add Firebase entries at the top (ascending order)
+                const firebaseEntries = [];
+                studentsSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    console.log('Students data:', data);
+                    const studentItem = document.createElement('tr');
+                    studentItem.setAttribute('data-firebase', 'true');
+                    studentItem.innerHTML = `
+                        <td></td>
+                        <td>${data.name}</td>
+                        <td>${data.thesis}</td>
+                        <td>${data.registrationDate}</td>
+                        <td>${data.status}</td>
+                        <td>${data.university}</td>
+                        <td>${data.role}</td>
+                    `;
+                    firebaseEntries.push(studentItem);
+                });
+                
+                // Insert Firebase entries at the top
+                firebaseEntries.forEach(entry => {
+                    studentsContainer.insertBefore(entry, studentsContainer.firstChild);
+                });
+                
+                // Renumber all entries sequentially
+                const allRows = studentsContainer.querySelectorAll('tr');
+                allRows.forEach((row, index) => {
+                    const firstCell = row.querySelector('td:first-child');
+                    if (firstCell) {
+                        firstCell.textContent = index + 1;
+                    }
+                });
+                
+                console.log('Students data loaded successfully');
+            } else {
+                console.log('Students container not found on page:', window.location.pathname);
+            }
+        } catch (error) {
+            console.error('Error loading students:', error);
+        }
+    }
+
+    // Make function available globally
+    window.loadStudents = loadStudents;
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Firebase data script loaded, starting data load...');
+        loadStudents();
+    });
+  </script>
 </body>
 </html>
 
