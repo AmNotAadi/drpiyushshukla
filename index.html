@@ -578,9 +578,9 @@
                         </div>
                     `;
                     
-                    // Insert at the beginning of the awards container
+                    // Insert at the beginning of the awards container (before first child)
                     const awardsContainer = document.getElementById('awardsContainer');
-                    awardsContainer.insertBefore(awardItem, firebaseAwardsContainer);
+                    awardsContainer.insertBefore(awardItem, awardsContainer.firstChild);
                     
                     // Add click event listener to the new award item
                     const header = awardItem.querySelector('.award-header');

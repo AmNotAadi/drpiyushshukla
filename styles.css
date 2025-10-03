@@ -542,11 +542,14 @@ body.dark-mode .badge-glow {
 
 .award-image img {
   width: 100%;
-  height: 300px;
+  max-width: 300px;
+  height: auto;
+  max-height: 400px;
   object-fit: contain;
   display: block;
   background: white;
   padding: 8px;
+  border-radius: 4px;
 }
 
 .award-image-caption {
@@ -576,7 +579,8 @@ body.dark-mode .badge-glow {
   }
   
   .award-image img {
-    height: 250px;
+    max-width: 250px;
+    max-height: 350px;
   }
 }
 
