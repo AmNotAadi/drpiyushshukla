@@ -494,6 +494,50 @@
                     <div id="academicsDeleteSuccess" class="success-message" style="display: none;">Academic activity deleted successfully!</div>
                 </div>
             </div>
+
+            <!-- Awards Section -->
+            <div class="dashboard-section">
+                <h3>Awards and Recognitions</h3>
+                <form id="awardsForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="awardTitle">Award Title</label>
+                            <input type="text" id="awardTitle" required>
+                        </div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label for="awardDescription">Award Description</label>
+                            <textarea id="awardDescription" required placeholder="Describe the award, its significance, and any relevant details..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label for="awardImages">Award Images (Optional)</label>
+                            <input type="file" id="awardImages" multiple accept="image/*">
+                            <small>You can select multiple images. Each image will be displayed with the award.</small>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Award</button>
+                </form>
+                <div id="awardsSuccess" class="success-message">Award added successfully!</div>
+                
+                <div class="delete-section">
+                    <h4>Delete Award Entry</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="awardsDeleteSelect">Select Award to Delete:</label>
+                            <select id="awardsDeleteSelect" required>
+                                <option value="">Loading awards...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="awardsDeleteBtn" class="delete-btn" disabled>Delete Selected Award</button>
+                        </div>
+                    </div>
+                    <div id="awardsDeleteSuccess" class="success-message" style="display: none;">Award deleted successfully!</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -503,6 +547,7 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, getDocs, orderBy, query, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -519,6 +564,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         // Function to load and display academic profile data
         async function loadAcademicProfile() {
@@ -646,6 +692,19 @@
                     academicsSelect.appendChild(option);
                 });
                 
+                // Awards dropdown
+                const awardsSnapshot = await getDocs(collection(db, 'awards'));
+                const awardsSelect = document.getElementById('awardsDeleteSelect');
+                awardsSelect.innerHTML = '<option value="">Select an award to delete</option>';
+                
+                awardsSnapshot.forEach((docSnapshot) => {
+                    const data = docSnapshot.data();
+                    const option = document.createElement('option');
+                    option.value = docSnapshot.id;
+                    option.textContent = data.title;
+                    awardsSelect.appendChild(option);
+                });
+                
             } catch (error) {
                 console.error('Error populating delete dropdowns:', error);
             }
@@ -664,12 +723,14 @@
         const researchForm = document.getElementById('researchForm');
         const studentForm = document.getElementById('studentForm');
         const academicsForm = document.getElementById('academicsForm');
+        const awardsForm = document.getElementById('awardsForm');
 
         // Success messages
         const academicProfileSuccess = document.getElementById('academicProfileSuccess');
         const researchSuccess = document.getElementById('researchSuccess');
         const studentSuccess = document.getElementById('studentSuccess');
         const academicsSuccess = document.getElementById('academicsSuccess');
+        const awardsSuccess = document.getElementById('awardsSuccess');
 
         // Auth state listener
         onAuthStateChanged(auth, async (user) => {
@@ -833,14 +894,68 @@
             }
         });
 
+        // Awards form submission
+        awardsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('awardTitle').value;
+            const description = document.getElementById('awardDescription').value;
+            const imageFiles = document.getElementById('awardImages').files;
+            
+            try {
+                let images = [];
+                
+                // Upload images if any
+                if (imageFiles.length > 0) {
+                    for (let i = 0; i < imageFiles.length; i++) {
+                        const file = imageFiles[i];
+                        const fileName = `awards/${Date.now()}_${file.name}`;
+                        const imageRef = ref(storage, fileName);
+                        
+                        // Upload file
+                        await uploadBytes(imageRef, file);
+                        
+                        // Get download URL
+                        const downloadURL = await getDownloadURL(imageRef);
+                        
+                        images.push({
+                            url: downloadURL,
+                            caption: file.name.replace(/\.[^/.]+$/, "") // Remove file extension for caption
+                        });
+                    }
+                }
+                
+                await addDoc(collection(db, 'awards'), {
+                    title,
+                    description,
+                    images,
+                    createdAt: new Date()
+                });
+                
+                awardsForm.reset();
+                awardsSuccess.style.display = 'block';
+                setTimeout(() => {
+                    awardsSuccess.style.display = 'none';
+                }, 3000);
+                
+                // Refresh delete dropdowns
+                await populateDeleteDropdowns();
+            } catch (error) {
+                console.error('Error adding award:', error);
+                alert('Error adding award. Please try again.');
+            }
+        });
+
         // Delete button event listeners
         const apDeleteBtn = document.getElementById('apDeleteBtn');
         const studentDeleteBtn = document.getElementById('studentDeleteBtn');
         const academicsDeleteBtn = document.getElementById('academicsDeleteBtn');
+        const awardsDeleteBtn = document.getElementById('awardsDeleteBtn');
         
         const apDeleteSelect = document.getElementById('apDeleteSelect');
         const studentDeleteSelect = document.getElementById('studentDeleteSelect');
         const academicsDeleteSelect = document.getElementById('academicsDeleteSelect');
+        const awardsDeleteSelect = document.getElementById('awardsDeleteSelect');
         
         // Enable/disable delete buttons based on selection
         apDeleteSelect.addEventListener('change', () => {
@@ -853,6 +968,10 @@
         
         academicsDeleteSelect.addEventListener('change', () => {
             academicsDeleteBtn.disabled = !academicsDeleteSelect.value;
+        });
+        
+        awardsDeleteSelect.addEventListener('change', () => {
+            awardsDeleteBtn.disabled = !awardsDeleteSelect.value;
         });
         
         // Academic Profile delete
@@ -963,6 +1082,26 @@
                 await populateDeleteDropdowns();
             } catch (error) {
                 console.error('Error deleting academics:', error);
+            }
+        });
+
+        // Awards delete
+        awardsDeleteBtn.addEventListener('click', async () => {
+            if (!awardsDeleteSelect.value) return;
+            
+            try {
+                await deleteDoc(doc(db, 'awards', awardsDeleteSelect.value));
+                awardsDeleteSelect.value = '';
+                awardsDeleteBtn.disabled = true;
+                document.getElementById('awardsDeleteSuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('awardsDeleteSuccess').style.display = 'none';
+                }, 3000);
+                
+                // Refresh dropdowns
+                await populateDeleteDropdowns();
+            } catch (error) {
+                console.error('Error deleting award:', error);
             }
         });
     </script>

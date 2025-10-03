@@ -89,6 +89,99 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // CV links handled via native download attribute in HTML
 
+  // Dark Mode Toggle functionality
+  const themeToggle = document.getElementById('themeToggle');
+  const sunIcon = document.getElementById('sunIcon');
+  const moonIcon = document.getElementById('moonIcon');
+  
+  // Check for saved theme preference or default to 'light'
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  
+  // Apply theme to body
+  if (currentTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'block';
+  } else {
+    document.body.classList.remove('dark-mode');
+    sunIcon.style.display = 'block';
+    moonIcon.style.display = 'none';
+  }
+  
+  // Theme toggle event listener
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      // Add wave overlay
+      const wave = document.createElement('div');
+      wave.className = 'theme-wave';
+      document.body.appendChild(wave);
+      
+      // Start wave animation
+      setTimeout(() => {
+        wave.classList.add('active');
+      }, 10);
+      
+      // Change theme when wave is halfway through
+      setTimeout(() => {
+        // Apply theme to body
+        if (newTheme === 'dark') {
+          document.body.classList.add('dark-mode');
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        } else {
+          document.body.classList.remove('dark-mode');
+          moonIcon.style.display = 'none';
+          sunIcon.style.display = 'block';
+        }
+        localStorage.setItem('theme', newTheme);
+      }, 300);
+      
+      // Remove wave after animation completes
+      setTimeout(() => {
+        wave.classList.remove('active');
+        setTimeout(() => {
+          if (document.body.contains(wave)) {
+            document.body.removeChild(wave);
+          }
+        }, 600);
+      }, 600);
+      
+      // Add click animation to button
+      themeToggle.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        themeToggle.style.transform = '';
+      }, 100);
+    });
+  }
+
+  // Expandable Awards functionality
+  const awardItems = [...document.querySelectorAll('.award-item')];
+  awardItems.forEach(item => {
+    const header = item.querySelector('.award-header');
+    const toggle = item.querySelector('.award-toggle');
+    
+    header.addEventListener('click', () => {
+      const isExpanded = item.classList.contains('expanded');
+      
+      // Close all other awards
+      awardItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('expanded');
+        }
+      });
+      
+      // Toggle current award
+      if (isExpanded) {
+        item.classList.remove('expanded');
+      } else {
+        item.classList.add('expanded');
+      }
+    });
+  });
+
   // Basic client-side validation message
   const form=document.querySelector('.contact-form');
   if(form){

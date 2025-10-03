@@ -34,6 +34,15 @@
       <a href="research.html">Research</a>
       <a href="students.html">Students</a>
       <a href="academics.html">Academics</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
       <a href="assets/Dr%20Piyush%20Kumar%20Shukla%20CV.docx" download="Dr Piyush Kumar Shukla CV.docx" class="cta cv-link">Download CV</a>
     </nav>
   </header>
@@ -215,18 +224,127 @@
 
     <section id="awards" class="section reveal">
       <h2>Awards and Recognitions</h2>
-      <div class="chips" id="achievementsContainer">
-        <a class="chip badge" href="#">OAT award, 2020 (Book)</a>
-        <a class="chip badge" href="#">Certificate, Taylor &amp; Francis Group</a>
-        <a class="chip badge" href="#">OAT award, Taylor &amp; Francis Group (Engineering)</a>
-        <span class="chip">President's Award for Research Excellence, USD (2019)</span>
-        <span class="chip">Professor of the Game (2019, 2020)</span>
-        <span class="chip">Belbas-Larson Award Nominee (2016–2020)</span>
-        <span class="chip">Senior Member, IEEE (2018)</span>
-        <span class="chip">Best Paper Awards (5)</span>
-        <span class="chip">HHS Ignite Award (2014)</span>
-        <span class="chip">INRIA-CORDI Fellowship (2008–2011)</span>
-        <span class="chip">ADB–Japan Scholarship (2005–2007)</span>
+      <div class="awards-grid" id="awardsContainer">
+        <!-- Static awards with expandable functionality -->
+        <div class="award-item" data-award="oat-2020">
+          <div class="award-header">
+            <span class="award-title">OAT Award, 2020 (Book)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Outstanding Academic Title (OAT) of the year for a book titled "Medical Imaging: Artificial Intelligence, Image Recognition, and Machine Learning Techniques," Association of College and Research Libraries (2020).</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="president-2019">
+          <div class="award-header">
+            <span class="award-title">President's Award for Research Excellence, USD (2019)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Recognized for outstanding research contributions and excellence in academic performance at the University of South Dakota.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="professor-game">
+          <div class="award-header">
+            <span class="award-title">Professor of the Game (2019, 2020)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Certificate of recognition for academic achievement, awarded by Academic Affairs for exceptional teaching and mentorship.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="belbas-larson">
+          <div class="award-header">
+            <span class="award-title">Belbas-Larson Award Nominee (2016–2020)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Nominated for Excellence in Teaching Award for five consecutive years, recognizing outstanding contributions to student learning and academic excellence.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="ieee-senior">
+          <div class="award-header">
+            <span class="award-title">Senior Member, IEEE (2018)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Elevated to Senior Member status of the Institute of Electrical and Electronics Engineers (IEEE), recognizing significant professional accomplishments and contributions to the field.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="best-paper">
+          <div class="award-header">
+            <span class="award-title">Best Paper Awards (5 Conferences)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Received best paper awards at five international conferences for outstanding research contributions in computer science and engineering.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="hhs-ignite">
+          <div class="award-header">
+            <span class="award-title">HHS Ignite Award (2014)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">U.S. Department of Health and Human Services Ignite Award for innovative contributions to healthcare technology and research.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="inria-fellowship">
+          <div class="award-header">
+            <span class="award-title">INRIA-CORDI Fellowship (2008–2011)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Fellowship for Fresh FP-6 Strep European Project, supporting advanced research in computer science and international collaboration.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="award-item" data-award="adb-scholarship">
+          <div class="award-header">
+            <span class="award-title">ADB–Japan Scholarship (2005–2007)</span>
+            <span class="award-toggle">+</span>
+          </div>
+          <div class="award-content">
+            <p class="award-description">Asian Development Bank-Japan Scholarship for advanced studies and research in computer science and engineering.</p>
+            <div class="award-images">
+              <!-- Images will be added here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Firebase awards will be loaded here -->
+        <div id="firebaseAwardsContainer"></div>
       </div>
     </section>
 
@@ -390,6 +508,117 @@
   <button class="to-top" aria-label="Back to top">↑</button>
 
   <script src="script.js"></script>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJ3v4LfZuOJbt9-1hR2A0rET4hVu3yJOs",
+        authDomain: "drpiyush-b6f33.firebaseapp.com",
+        projectId: "drpiyush-b6f33",
+        storageBucket: "drpiyush-b6f33.firebasestorage.app",
+        messagingSenderId: "316729773343",
+        appId: "1:316729773343:web:404f502ca8a0b62d5c342a",
+        measurementId: "G-WE027KLS4F"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Function to load and display awards data
+    async function loadAwards() {
+        try {
+            console.log('Loading awards data...');
+            
+            // Try with ordering first, fallback to no ordering if it fails
+            let awardsSnapshot;
+            try {
+                const awardsQuery = query(collection(db, 'awards'), orderBy('createdAt', 'desc'));
+                awardsSnapshot = await getDocs(awardsQuery);
+            } catch (orderError) {
+                console.log('Ordering failed, trying without order:', orderError);
+                awardsSnapshot = await getDocs(collection(db, 'awards'));
+            }
+            
+            console.log('Awards documents found:', awardsSnapshot.size);
+            
+            const firebaseAwardsContainer = document.getElementById('firebaseAwardsContainer');
+            if (firebaseAwardsContainer) {
+                console.log('Firebase awards container found');
+                
+                awardsSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    console.log('Award data:', data);
+                    
+                    const awardItem = document.createElement('div');
+                    awardItem.className = 'award-item';
+                    awardItem.setAttribute('data-award', doc.id);
+                    
+                    let imagesHtml = '';
+                    if (data.images && data.images.length > 0) {
+                        imagesHtml = data.images.map(image => `
+                            <div class="award-image">
+                                <img src="${image.url}" alt="${image.caption || data.title}" loading="lazy">
+                                ${image.caption ? `<div class="award-image-caption">${image.caption}</div>` : ''}
+                            </div>
+                        `).join('');
+                    }
+                    
+                    awardItem.innerHTML = `
+                        <div class="award-header">
+                            <span class="award-title">${data.title}</span>
+                            <span class="award-toggle">+</span>
+                        </div>
+                        <div class="award-content">
+                            <p class="award-description">${data.description}</p>
+                            ${imagesHtml ? `<div class="award-images">${imagesHtml}</div>` : ''}
+                        </div>
+                    `;
+                    
+                    // Insert at the beginning of the awards container
+                    const awardsContainer = document.getElementById('awardsContainer');
+                    awardsContainer.insertBefore(awardItem, firebaseAwardsContainer);
+                    
+                    // Add click event listener to the new award item
+                    const header = awardItem.querySelector('.award-header');
+                    header.addEventListener('click', () => {
+                        const isExpanded = awardItem.classList.contains('expanded');
+                        
+                        // Close all other awards
+                        const allAwardItems = [...document.querySelectorAll('.award-item')];
+                        allAwardItems.forEach(otherItem => {
+                            if (otherItem !== awardItem) {
+                                otherItem.classList.remove('expanded');
+                            }
+                        });
+                        
+                        // Toggle current award
+                        if (isExpanded) {
+                            awardItem.classList.remove('expanded');
+                        } else {
+                            awardItem.classList.add('expanded');
+                        }
+                    });
+                });
+                
+                console.log('Awards data loaded successfully');
+            } else {
+                console.log('Firebase awards container not found');
+            }
+        } catch (error) {
+            console.error('Error loading awards:', error);
+        }
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Firebase awards script loaded, starting data load...');
+        loadAwards();
+    });
+  </script>
 </body>
 </html>
 
