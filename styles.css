@@ -520,8 +520,9 @@ body.dark-mode .badge-glow {
 }
 
 .award-images {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 16px;
   margin-top: 16px;
 }
@@ -575,7 +576,8 @@ body.dark-mode .badge-glow {
   }
   
   .award-images {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: center;
   }
   
   .award-image img {
