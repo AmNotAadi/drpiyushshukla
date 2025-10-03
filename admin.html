@@ -897,34 +897,56 @@
         // Awards form submission
         awardsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const title = document.getElementById('awardTitle').value;
-            const description = document.getElementById('awardDescription').value;
-            const imageFiles = document.getElementById('awardImages').files;
+            console.log('Awards form submitted');
             
             try {
+                const title = document.getElementById('awardTitle').value;
+                const description = document.getElementById('awardDescription').value;
+                const imageFiles = document.getElementById('awardImages').files;
+                
+                console.log('Award data:', { title, description, imageFiles: imageFiles.length });
+                
+                if (!title || !description) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
                 let images = [];
                 
                 // Upload images if any
                 if (imageFiles.length > 0) {
-                    for (let i = 0; i < imageFiles.length; i++) {
-                        const file = imageFiles[i];
-                        const fileName = `awards/${Date.now()}_${file.name}`;
-                        const imageRef = ref(storage, fileName);
-                        
-                        // Upload file
-                        await uploadBytes(imageRef, file);
-                        
-                        // Get download URL
-                        const downloadURL = await getDownloadURL(imageRef);
-                        
-                        images.push({
-                            url: downloadURL,
-                            caption: file.name.replace(/\.[^/.]+$/, "") // Remove file extension for caption
-                        });
+                    console.log('Uploading images...');
+                    try {
+                        for (let i = 0; i < imageFiles.length; i++) {
+                            const file = imageFiles[i];
+                            const fileName = `awards/${Date.now()}_${file.name}`;
+                            const imageRef = ref(storage, fileName);
+                            
+                            console.log(`Uploading image ${i + 1}/${imageFiles.length}: ${file.name}`);
+                            
+                            // Upload file
+                            await uploadBytes(imageRef, file);
+                            
+                            // Get download URL
+                            const downloadURL = await getDownloadURL(imageRef);
+                            
+                            images.push({
+                                url: downloadURL,
+                                caption: file.name.replace(/\.[^/.]+$/, "") // Remove file extension for caption
+                            });
+                            
+                            console.log(`Image ${i + 1} uploaded successfully`);
+                        }
+                        console.log('All images uploaded successfully');
+                    } catch (imageError) {
+                        console.error('Image upload failed:', imageError);
+                        // Continue without images rather than failing the entire form
+                        alert('Warning: Image upload failed. Award will be saved without images.');
+                        images = [];
                     }
                 }
                 
+                console.log('Adding award to Firestore...');
                 await addDoc(collection(db, 'awards'), {
                     title,
                     description,
@@ -932,6 +954,7 @@
                     createdAt: new Date()
                 });
                 
+                console.log('Award added successfully');
                 awardsForm.reset();
                 awardsSuccess.style.display = 'block';
                 setTimeout(() => {
@@ -942,7 +965,7 @@
                 await populateDeleteDropdowns();
             } catch (error) {
                 console.error('Error adding award:', error);
-                alert('Error adding award. Please try again.');
+                alert('Error adding award: ' + error.message);
             }
         });
 
